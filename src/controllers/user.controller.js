@@ -53,7 +53,7 @@ const registerUser = asyncHandler(async (req, res) => {
     const coverImage = await uploadToCloudinary(coverImageLocalPath);
 
     if(!avatar){
-        throw new ApiError(500, "Error while uploading avatar");
+        throw new ApiError(400, "Avatar image is required");
     }
 
     //create user object - create entry in database
@@ -63,7 +63,7 @@ const registerUser = asyncHandler(async (req, res) => {
         fullName,
         password,
         avatar: avatar.url,
-        coverImage: coverImage?.url || null,
+        coverImage: coverImage?.url || "",
 
     });
 
