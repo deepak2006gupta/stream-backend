@@ -3,8 +3,8 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
 const userSchema = new Schema({
-    unsername:{
-        type: string,
+    username:{
+        type: String,
         required: true,
         unique: true,
         lowercase: true,
@@ -12,25 +12,25 @@ const userSchema = new Schema({
         index: true
     },
     email:{
-        type: string,
+        type: String,
         required: true,
         unique: true,
         lowercase: true,
         trim: true,
     },
     fullname:{
-        type: string,
+        type: String,
         required: true,
         lowercase: true,
         trim: true,
         index: true
     },
     avatar: {
-        type: string, //cloudnary url
+        type: String, //cloudnary url
         required: true,
     },
     coverImage: {
-        type: string, //cloudnary url
+        type: String, //cloudnary url
     },
     watchHistory: {
         type: Schema.Types.ObjectId,
