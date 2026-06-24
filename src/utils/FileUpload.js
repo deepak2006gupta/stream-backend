@@ -29,8 +29,6 @@ const uploadToCloudinary = async (filePath) => {
       resource_type: "auto",
     });
 
-    console.log("File uploaded successfully:", response.secure_url);
-
     // delete temp file after successful upload
     deleteLocalFile(filePath);
 
