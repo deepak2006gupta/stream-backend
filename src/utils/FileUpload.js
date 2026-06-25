@@ -30,7 +30,7 @@ const uploadToCloudinary = async (filePath) => {
 
     // delete temp file after successful upload
     deleteLocalFile(filePath);
-
+ 
     return response;
   } catch (error) {
     // delete temp file even if upload fails
