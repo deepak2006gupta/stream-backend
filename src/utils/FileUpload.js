@@ -41,4 +41,4 @@ const uploadToCloudinary = async (filePath) => {
   }
 };
 
-export { uploadToCloudinary };
+export { uploadToCloudinary , deleteLocalFile };
