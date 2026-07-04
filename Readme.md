@@ -1,13 +1,13 @@
 # StreamMe Backend - A YouTube-like Application Backend
 
 This is the backend service for a video-sharing platform, providing functionalities similar to YouTube. It handles user authentication, data management, and file uploads.
-
 ## ✨ Features
 
 *   **User Authentication**: Secure user registration and login.
 *   **JWT Support**: Uses JSON Web Tokens (Access and Refresh Tokens) for authentication.
 *   **Image Uploads**: Supports uploading user avatars and cover images to Cloudinary.
 *   **Cookie-based Sessions**: Manages user sessions by sending tokens in secure, HTTP-only cookies.
+*   **User Profile Management**: Allows users to view and update their profile information.
 
 ## 🛠️ Technologies Used
 
@@ -34,7 +34,7 @@ Make sure you have Node.js and npm installed on your machine. You will also need
     ```
 2.  Navigate to the project directory:
     ```sh
-    cd stream-Backend
+    cd Chai-Backend
     ```
 3.  Install the dependencies:
     ```sh

@@ -289,17 +289,16 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 
 })
 
-const updateCurrentUser = asyncHandler(async (req, res) => {
-    const { username, email, fullname } = req.body;
+const updateAccountDetails = asyncHandler(async (req, res) => {
+    const { fullname, email } = req.body;
 
-    if(!username && !email && !fullname){
-        throw new ApiError(400, "At least one field is required to update");
+    if (!fullname && !email) {
+        throw new ApiError(400, "At least one field (fullname, email) is required to update account details");
     }
 
     const user = await User.findByIdAndUpdate(
         req.user?._id,
-        { $set: { 
-            username, 
+        { $set: {  
             email, 
             fullname 
         } },
@@ -310,20 +309,21 @@ const updateCurrentUser = asyncHandler(async (req, res) => {
         throw new ApiError(404, "User not found");
     }
 
-    console.log("Current user updated successfully", user.username || user.email)
+    console.log("Current user account details updated successfully", user.username || user.email)
     return res.status(200).json(
         new ApiResponse(
             200,
             user,
-            "Current user updated successfully"
+            "Account details updated successfully"
         )
     )
 
 
 })
 
-const updateCurrentUserAvatar = asyncHandler(async (req, res) => {
-    const avatarLocalPath = req.file?.avatar[0]?.path;
+const updateUserAvatar = asyncHandler(async (req, res) => {
+    const avatarLocalPath = req.file?.path;
+
     if(!avatarLocalPath){
         throw new ApiError(400, "Avatar image is required");
     }
@@ -354,8 +354,9 @@ const updateCurrentUserAvatar = asyncHandler(async (req, res) => {
 
 })
 
-const updateCurrentUserCoverImage = asyncHandler(async (req, res) => {
-    const coverImageLocalPath = req.file?.coverImage[0]?.path;
+const updateUserCoverImage = asyncHandler(async (req, res) => {
+    const coverImageLocalPath = req.file?.path;
+
     if(!coverImageLocalPath){
         throw new ApiError(400, "Cover image is required");
     }
@@ -389,8 +390,8 @@ export {
     logoutUser, 
     refreshAccessToken, 
     changeCurrentPassword,
-    getCurrentUser, 
-    updateCurrentUser, 
-    updateCurrentUserAvatar,
-    updateCurrentUserCoverImage
+    getCurrentUser,
+    updateAccountDetails,
+    updateUserAvatar,
+    updateUserCoverImage
 };
