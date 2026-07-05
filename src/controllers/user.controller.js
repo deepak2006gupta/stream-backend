@@ -119,9 +119,10 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req,res) =>{
 /*steps to loginuser:
 1.get user details from user{
-    username,email,password
+    username,email,password,captchaToken
     }
 2.get username or email
+2.2 get captchaToken and verify it
 3.check if user exists
 4.validate password
 5.generate access token and refresh token
@@ -384,6 +385,49 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     )
 })
 
+const captchaVerification = asyncHandler(async (req, res) => {
+    const { captchaToken } = req.body;
+    const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+    const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${captchaToken}`;
+    const response = await fetch(verifyUrl, {
+        method: "POST",
+    });
+    const data = await response.json();
+    if (data.success) {
+        return res.status(200).json({
+            success: true,
+            message: "Captcha verification successful"
+        });
+    } else {
+        return res.status(400).json({
+            success: false,
+            message: "Captcha verification failed"
+        });
+    }
+});
+
+
+const resetUserPassword = asyncHandler(async (req, res) => {
+    const { password } = req.body;
+    const user = await User.findByIdAndUpdate(
+        req.user?._id,
+        { $set: { password } },
+        { new: true }
+    ).select("-password");
+    if(!user){
+        throw new ApiError(404, "User not found");
+    }
+
+    console.log("Current user password reset successfully", user.username || user.email)
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            user,
+            "Current user password reset successfully"
+        )
+    )
+})
+
 export { 
     registerUser, 
     loginUser, 
@@ -393,5 +437,7 @@ export {
     getCurrentUser,
     updateAccountDetails,
     updateUserAvatar,
-    updateUserCoverImage
+    updateUserCoverImage,
+    captchaVerification,
+    resetUserPassword
 };
