@@ -30,7 +30,8 @@ router.route("/logout").post( verifyJWT, logoutUser);
 router.route("/refresh-token").post(refreshAccessToken);
 
 router.route("/change-password").patch(verifyJWT, changeCurrentPassword);
-router.route("/reset-password").post(changeCurrentPassword);
+router.route("/reset-password").post(verifyJWT, resetUserPassword);
+
 router.route("/current-user").get(verifyJWT, getCurrentUser);
 router.route("/update-account").patch(verifyJWT, updateAccountDetails);
 

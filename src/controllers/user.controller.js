@@ -7,7 +7,12 @@ import jwt from 'jsonwebtoken';
 
 const GenerateAccessAndRefreshToken = async (userId) => {
     try{
-        const user = await User.findByIdAndUpdate(userId)
+        const user = await User.findById(userId)
+
+        if(!user){
+            throw new ApiError(404, "User not found");
+        }
+
         const accessToken = user.generateAccessToken()
         const refreshToken = user.generateRefreshToken()
 
@@ -175,7 +180,7 @@ const loginUser = asyncHandler(async (req,res) =>{
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
-    User.findByIdAndUpdate(
+    await User.findByIdAndUpdate(
         req.user?._id, {
             $set: { refreshToken: undefined }
         },
@@ -218,7 +223,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             throw new ApiError(401, "Unauthorised request: Invalid refresh token");
         }
 
-        const { accessToken, newRefreshToken } = await GenerateAccessAndRefreshToken(user._id)
+        const { accessToken, refreshToken } = await GenerateAccessAndRefreshToken(user._id)
 
         const cookieOptions = {
             httpOnly: true,
@@ -228,11 +233,11 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         return res
         .status(200)
         .cookie("accessToken", accessToken, cookieOptions)
-        .cookie("refreshToken", newRefreshToken, cookieOptions)
+        .cookie("refreshToken", refreshToken, cookieOptions)
         .json(
             new ApiResponse(
                 200,
-                { accessToken, refreshToken: newRefreshToken },
+                { accessToken, refreshToken },
                 "Access token refreshed successfully"
             )
         )
@@ -409,20 +414,22 @@ const captchaVerification = asyncHandler(async (req, res) => {
 
 const resetUserPassword = asyncHandler(async (req, res) => {
     const { password } = req.body;
-    const user = await User.findByIdAndUpdate(
-        req.user?._id,
-        { $set: { password } },
-        { new: true }
-    ).select("-password");
+    const user = await User.findById(req.user?._id);
+
     if(!user){
         throw new ApiError(404, "User not found");
     }
+
+    user.password = password;
+    await user.save({ validateBeforeSave: false });
+
+    const updatedUser = await User.findById(req.user?._id).select("-password");
 
     console.log("Current user password reset successfully", user.username || user.email)
     return res.status(200).json(
         new ApiResponse(
             200,
-            user,
+            updatedUser,
             "Current user password reset successfully"
         )
     )
